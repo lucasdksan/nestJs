@@ -89,6 +89,44 @@ Request -> Validação -> Modificação -> Response
 
 ![img](./README/cicle.png)
 
+## Bootstrap
+
+O Bootstrap do NestJS é o processo inicial de inicialização de uma aplicação NestJS. ele responsável por configurar e preparar a aplicação para funcionar corretamente.
+
+Durante o processo de Bootstrap, o NestJS realiza várias etapas importantes:
+
+* Configuração do Módulo Raiz.
+
+* Injeção de Dependências.
+
+* Configuração do Middleware.
+
+* Inicialização dos Controladores.
+
+* Configuração do Servidor HTTP.
+
+* Conexão com Banco de Dados.
+
+* Configuração de Logs e Tratamento de Erros.
+
+## Decorators
+
+Os decorators desempenham um papel crucial no NestJS, permitindo que os desenvolvedores apliquem metadados a classes, métodos, propriedades e parâmetros de forma aprimorada. Esses metadados são usados pelo framework para configurar e gerenciar automaticamente muitos aspectos da aplicação. 
+
+* @Module: Este decorator é usado para definir um módulo dentro da aplicação NestJS. Os módulos são a unidade de organização e encapsulamento no NestJS, agrupando controladores, provedores de serviços e outros componentes relacionados.
+
+* @Controller: Utilizado para marcar uma classe como um controlador no NestJS. Os controladores são responsáveis por lidar com solicitações HTTP e retornar respostas apropriadas. Métodos dentro da classe controladora são decorados com outros decorators, como @Get, @Post, @Put, etc., para definir os pontos de extremidade da API.
+
+* @Injectable: Este decorator marca uma classe como um provedor de serviço no NestJS. Os provedores de serviços são usados para gerenciar a lógica de negócios, realizar operações de banco de dados, interagir com APIs externas e muito mais. Eles podem ser injetados em outros componentes usando a injeção de dependência do NestJS.
+
+* @Inject: Usado para injetar dependências em um componente. Quando usado em um construtor de classe, o NestJS usa metadados para determinar quais dependências devem ser injetadas.
+
+* @Middleware: Utilizado para definir middleware personalizado no NestJS. Os middlewares são funções que são executadas antes ou depois do processamento de solicitações HTTP. Eles podem ser aplicados a nível global, de módulo ou de controlador.
+
+* @Guard: Decorator usado para aplicar guardas em controladores ou rotas. Os guardas são utilizados para implementar lógica de autorização e autenticação em pontos de extremidade da API.
+
+* @Param, @Query, @Body, @Headers: Esses decorators são usados para extrair dados de solicitação HTTP em controladores. Por exemplo, @Param é usado para acessar parâmetros de rota, @Query para acessar parâmetros de consulta, @Body para acessar o corpo da solicitação e @Headers para acessar cabeçalhos da solicitação.
+
 ## Referências
 
 - [Nest Js URL](https://docs.nestjs.com/)
