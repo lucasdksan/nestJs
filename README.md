@@ -127,6 +127,103 @@ Os decorators desempenham um papel crucial no NestJS, permitindo que os desenvol
 
 * @Param, @Query, @Body, @Headers: Esses decorators são usados para extrair dados de solicitação HTTP em controladores. Por exemplo, @Param é usado para acessar parâmetros de rota, @Query para acessar parâmetros de consulta, @Body para acessar o corpo da solicitação e @Headers para acessar cabeçalhos da solicitação.
 
+## Modules
+
+No NestJS, os módulos são uma parte fundamental da estrutura de aplicativos. Eles ajudam na organização e modularização do código, facilitando a escalabilidade e a manutenção.
+
+Um módulo no NestJS é basicamente um contêiner para um conjunto de controladores, provedores de serviços e outros componentes relacionados. Ele encapsula funcionalidades relacionadas em uma unidade coesa.
+
+Ao criar um novo módulo, você pode usar o CLI do Nest para gerar automaticamente os arquivos necessários, como o arquivo do módulo em si, controladores, provedores de serviço, etc.
+
+Um exemplo básico de um módulo no NestJS:
+
+```markdown
+    import { Module } from '@nestjs/common';
+    import { CatsController } from './cats.controller';
+    import { CatsService } from './cats.service';
+
+    @Module({
+    controllers: [CatsController],
+    providers: [CatsService],
+    })
+    export class CatsModule {}
+```
+
+Neste exemplo, CatsModule é um módulo que encapsula a lógica relacionada a gatos em um aplicativo. Ele declara um controlador CatsController e um provedor de serviço CatsService. O @Module() decorator é usado para definir este módulo e especificar quais controladores e provedores de serviço pertencem a ele.
+
+Os módulos também podem ser importados em outros módulos para reutilização de funcionalidades. Isso promove o conceito de modularidade, onde partes do aplicativo podem ser facilmente reutilizadas e compartilhadas entre diferentes partes do sistema.
+
+Além disso, os módulos no NestJS também suportam a injeção de dependências, o que significa que os provedores de serviços dentro de um módulo podem ser facilmente injetados em controladores ou outros provedores dentro do mesmo módulo ou em módulos diferentes.
+
+## Controllers
+
+Os controladores no NestJS são responsáveis por lidar com as requisições HTTP, definindo rotas e manipulando a lógica de negócios associada a essas rotas. Eles desempenham um papel central na estrutura de um aplicativo NestJS, ajudando a manter a separação de preocupações e a organização do código.
+
+Um controlador é uma classe decorada com @Controller(), e dentro dela, você define métodos que representam os diferentes endpoints da sua API. Cada método do controlador é decorado com um verbo HTTP (como @Get(), @Post(), @Put(), @Delete(), etc.) para indicar qual tipo de requisição ele manipula e qual rota está associada a ele.
+
+Aqui está um exemplo básico de um controlador no NestJS:
+
+```markdown
+import { Controller, Get, Post, Body } from '@nestjs/common';
+import { CreateCatDto } from './create-cat.dto';
+import { CatsService } from './cats.service';
+import { Cat } from './interfaces/cat.interface';
+
+@Controller('cats')
+export class CatsController {
+  constructor(private readonly catsService: CatsService) {}
+
+  @Post()
+  async create(@Body() createCatDto: CreateCatDto) {
+    return this.catsService.create(createCatDto);
+  }
+
+  @Get()
+  async findAll(): Promise<Cat[]> {
+    return this.catsService.findAll();
+  }
+}
+```
+
+Neste exemplo, CatsController é um controlador que lida com operações relacionadas a gatos. Ele possui dois métodos decorados com @Post() e @Get(). O método create() manipula requisições POST para criar novos gatos, enquanto o método findAll() lida com requisições GET para retornar todos os gatos existentes.
+
+Além disso, os controladores podem injetar serviços através do construtor, permitindo que eles acessem a lógica de negócios encapsulada em provedores de serviço. Isso promove a separação de preocupações e facilita a reutilização de código.
+
+## Services
+
+Os serviços no NestJS são classes que contêm a lógica de negócios da sua aplicação. Eles são responsáveis por realizar tarefas específicas, como acessar o banco de dados, manipular dados, executar cálculos complexos ou interagir com sistemas externos. Os serviços são injetáveis e podem ser facilmente compartilhados e reutilizados em toda a sua aplicação.
+
+Para criar um serviço no NestJS, você simplesmente cria uma classe TypeScript comum, e pode marcá-la com o decorador @Injectable() para torná-la um serviço injetável. Em seguida, você pode injetar esse serviço em outros componentes, como controladores, outros serviços ou módulos, usando a injeção de dependência do NestJS.
+
+Aqui está um exemplo básico de um serviço no NestJS:
+
+```markdown
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class CatsService {
+  private readonly cats: Cat[] = [];
+
+  create(cat: Cat) {
+    this.cats.push(cat);
+  }
+
+  findAll(): Cat[] {
+    return this.cats;
+  }
+
+  findOne(id: number): Cat {
+    return this.cats.find(cat => cat.id === id);
+  }
+}
+```
+
+Neste exemplo, CatsService é um serviço que encapsula a lógica relacionada a gatos em um aplicativo. Ele possui métodos para criar um novo gato (create()), recuperar todos os gatos existentes (findAll()), e recuperar um único gato por ID (findOne()).
+
+Os serviços no NestJS são extremamente flexíveis e podem interagir com qualquer parte do seu aplicativo, incluindo o banco de dados, APIs externas, ou outros serviços. Eles promovem a modularidade, a reutilização de código e a separação de preocupações, facilitando o desenvolvimento e a manutenção de aplicativos escaláveis e robustos.
+
+Além disso, os serviços no NestJS também podem ser facilmente testados, já que são classes TypeScript comuns e podem ser injetados com dependências mocadas durante os testes unitários.
+
 ## Referências
 
 - [Nest Js URL](https://docs.nestjs.com/)
