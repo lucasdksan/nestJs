@@ -224,9 +224,25 @@ Os serviços no NestJS são extremamente flexíveis e podem interagir com qualqu
 
 Além disso, os serviços no NestJS também podem ser facilmente testados, já que são classes TypeScript comuns e podem ser injetados com dependências mocadas durante os testes unitários.
 
+## CRUD em uma API REST
+
+**O que é API?**
+
+API(Application Programming Interface) significa Interface de Programação de Aplicação. Uma interface é a parte visível ou acessível para que uma aplicação possa ser usada ou acessada.
+
+No caso uma API é criada de uma forma que outras aplicações possam ser programadas para usar a aplicação.
+
+**Rest**
+
+REST (Represetation State Transfer) significa Transferência Representacional de Estado e é um estilo de arquitetura de software ou convenções de regras para criação de uma API servida na Web pois dependendo dos recursos do produto HTTP como por exemplo URI e Método.
+
+**CRUD**
+
+CRUD (Create, Read, Update e Delete) significa criar uma aplicação que consiga criar, ler, alterar e excluir um registro que está gravado de forma persistente como em um banco de dados
+
 ## Referências
 
 - [Nest Js URL](https://docs.nestjs.com/)
 - [Udemy](https://www.udemy.com/)
 - [Chat GPT](https://chat.openai.com/)
-- [TabNews](https://www.tabnews.com.br/)
+- [TabNews](https://www.tabnews.com.br/) 
