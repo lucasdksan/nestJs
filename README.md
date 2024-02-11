@@ -627,6 +627,120 @@ Este é um filtro de exceções global que captura todas as exceções lançadas
 
 As exceções no NestJS são uma parte crucial da gestão de erros em uma aplicação. Elas permitem capturar, tratar e personalizar respostas de erro para garantir uma experiência de usuário consistente e confiável. Ao usar exceções de forma eficaz, você pode melhorar a segurança, a confiabilidade e a manutenção da sua aplicação.
 
+## Param Decorators
+
+Os decoradores de parâmetros no NestJS são uma característica poderosa que permite acessar e manipular os parâmetros de solicitação HTTP em métodos de controladores de forma conveniente e declarativa. Eles facilitam a obtenção de dados específicos de uma solicitação HTTP, como parâmetros de rota, corpo da solicitação, cabeçalhos e muito mais, simplificando o processo de desenvolvimento de APIs.
+
+**Funcionamento dos Param Decorators**
+
+Os param decorators são usados para extrair dados específicos de uma solicitação HTTP em um método de controlador. Eles são colocados ao lado dos parâmetros de método e podem ser usados para acessar e manipular os dados da solicitação antes que o método seja executado.
+
+**Tipos de Param Decorators**
+
+@Param(): Este decorator é usado para extrair parâmetros de rota de uma solicitação HTTP. Ele permite acessar os parâmetros de rota definidos na definição da rota.
+
+@Query(): Este decorator é usado para extrair parâmetros de consulta (query parameters) de uma solicitação HTTP. Ele permite acessar os parâmetros de consulta passados na URL.
+
+@Body(): Este decorator é usado para extrair dados do corpo (body) de uma solicitação HTTP. Ele permite acessar os dados enviados no corpo da solicitação, geralmente em requisições POST e PUT.
+
+@Headers(): Este decorator é usado para extrair cabeçalhos (headers) de uma solicitação HTTP. Ele permite acessar os cabeçalhos da solicitação, como Content-Type, Authorization, etc.
+
+@Req(): Este decorator é usado para obter o objeto de solicitação HTTP completo. Ele permite acesso total à solicitação HTTP, incluindo corpo, cabeçalhos, URL, etc.
+
+**Implementação de Param Decorators**
+
+Aqui está um exemplo básico de como você pode usar os param decorators em um método de controlador em uma aplicação NestJS:
+
+```markdown
+import { Controller, Get, Param, Query, Body, Headers, Req } from '@nestjs/common';
+
+@Controller('users')
+export class UserController {
+  @Get(':id')
+  async getUserById(@Param('id') userId: string) {
+    // userId contém o parâmetro de rota ':id'
+    return `Detalhes do usuário com o ID ${userId}`;
+  }
+
+  @Get()
+  async getUsers(@Query() queryParams: any) {
+    // queryParams contém os parâmetros de consulta da solicitação
+    return `Listagem de usuários com os parâmetros de consulta: ${JSON.stringify(queryParams)}`;
+  }
+
+  @Post()
+  async createUser(@Body() userData: any) {
+    // userData contém os dados do corpo da solicitação
+    return `Novo usuário criado com os seguintes dados: ${JSON.stringify(userData)}`;
+  }
+
+  @Get('headers')
+  async getUserHeaders(@Headers() headers: any) {
+    // headers contém todos os cabeçalhos da solicitação
+    return `Cabeçalhos da solicitação: ${JSON.stringify(headers)}`;
+  }
+
+  @Get('request')
+  async getRequestDetails(@Req() request: any) {
+    // request contém o objeto de solicitação HTTP completo
+    return `Detalhes completos da solicitação: ${JSON.stringify(request)}`;
+  }
+}
+```
+
+**Aplicação de Param Decorators**
+
+Os param decorators podem ser usados em qualquer método de controlador em uma aplicação NestJS. Eles são colocados ao lado dos parâmetros de método e permitem acessar e manipular os dados da solicitação de forma fácil e declarativa.
+
+Por exemplo, o decorator @Param() é usado para acessar os parâmetros de rota, enquanto o decorator @Query() é usado para acessar os parâmetros de consulta. Você pode aplicar esses decorators em qualquer método de controlador para acessar os dados específicos da solicitação necessários para realizar a lógica de negócios.
+
+Os param decorators no NestJS são uma ferramenta poderosa que simplifica o processo de obtenção de dados da solicitação HTTP em métodos de controladores. Eles ajudam a tornar o código mais limpo, conciso e legível, promovendo uma melhor modularidade e reutilização de código.
+
+## JWT
+
+**O que é JWT?**
+
+JWT (JSON Web Token) é um padrão aberto RFC 7519 que fornece um método seguro para comunicar informações entre duas partes.
+
+Um token JWT é uma string composta de 3 partes separadas pelo caractere ponto. Cada uma das partes respectivamente são:
+
+* Header
+* Payload
+* Signature
+
+**Header**
+
+O header do token JWT é um JSON codificado em Base64 que contém a informação do algoritmo usado na criptografia da assinatura e o tipo do token.
+
+Existem várias opções de algoritmos que são aceitos no padrão JWT. O mais comum atualmente é o HS256, mas você pode escolher outros para aumentar a segurança ou devido aos recursos disponíveis da linguagem de programação escolhida. 
+
+**Payload**
+
+O header do token JWT é um JSON codificado em Base64 que contém a informação do algoritmo usado na criptografia da assinatura e o tipo do token.
+
+Existem várias opções de algoritmos que são aceitos no padrão JWT. O mais comum atualmente é o HS256, mas você pode escolher outros para aumentar a segurança ou devido aos recursos disponíveis da linguagem de programação escolhida. 
+
+“iss”: Esta chave que é a abreviação da palavra issuer serve para identificar o principal emissor do JWT e o seu uso é opcional.
+
+“sub”: Esta chave que é a abreviação da palavra subject serve para identificar o principal assunto do JWT e o emissor deve encarar esse valor como exclusivo, o uso é opcional.
+
+“aud”: Esta chave que é a abreviação da palavra audience serve para identificar o destinatário do token, o uso é opcional.
+
+“exp”: Esta chave que é a abreviação da expressão expiration time serve para identificar o tempo de expiração do token, o uso é opcional.
+
+“nbf”: Esta chave que é a abreviação da expressão not before serve para identificar o tempo de inicio da validade do token, seu uso é opcional.
+
+“iat”: Esta chave que é a abreviação da expressão issued at serve para identificar o momento da criação do token e assim saber qual a sua idade, o seu uso é opcional.
+
+“jti”: Esta chave que é a abreviação da expressão JWT ID serve para identificar de forma única um token, isso é útil para uma aplicação que possui mais de um emissor de tokens, o seu uso é opcional.
+
+**Signature**
+
+A assinatura do token é a string em Base64 do resultado da criptografia com o algoritmo escolhido e identificado no header. A string que será criptografada é a string do header codificada em Base64 concatenada com um ponto e com a string codificada em Base64 do payload.
+
+Isso fará com que qualquer alteração no header ou payload mude o valor da assinatura, que por sua vez só pode ser obtida de forma válida com uma chave secreta que apenas o emissor deve possuir.
+
+
 ## Referências
 
 - [Nest Js URL](https://docs.nestjs.com/)
