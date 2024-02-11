@@ -3,38 +3,65 @@ import { CreateUserDTO } from "./dto/create-user.dto";
 import { PrismaService } from "src/prisma/prisma.service";
 import { UpdatePutUserDTO } from "./dto/update-put-user.dto";
 import { UpdatePatchUserDTO } from "./dto/update-patch-user.dto";
+import { NotFoundError } from "rxjs";
 
 @Injectable()
 export class UserService {
-    constructor(private readonly prisma: PrismaService){}
+    constructor(private readonly prisma: PrismaService) { }
 
-    async create(data: CreateUserDTO){
+    async create(data: CreateUserDTO) {
         return await this.prisma.user.create({
             data
         });
     }
 
-    async list(){
+    async list() {
         return await this.prisma.user.findMany();
     }
 
-    async show(id: string){
+    async show(id: number) {
         return await this.prisma.user.findUnique({
             where: { id }
         });
     }
 
-    async updatePut(id: string, data: UpdatePutUserDTO) {
+    async updatePut(id: number, data: UpdatePutUserDTO) {
+        await this.exists(id);
+
         return await this.prisma.user.update({
             where: { id },
-            data
+            data: { birth_at: data.birth_at ? new Date(data.birth_at) : null, ...data }
         });
     }
 
-    async updatePatch(id: string, data: UpdatePatchUserDTO) {
+    async updatePatch(id: number, data: UpdatePatchUserDTO) {
+        await this.exists(id);
+
+        let birth_at_convert;
+
+        if (data.birth_at) {
+            birth_at_convert = new Date(data.birth_at);
+        } else {
+            birth_at_convert = null;
+        }
+
         return await this.prisma.user.update({
             where: { id },
-            data
+            data: { birth_at: birth_at_convert, ...data }
         });
+    }
+
+    async delete(id: number) {
+        await this.exists(id);
+
+        return await this.prisma.user.delete({
+            where: { id }
+        });
+    }
+
+    async exists(id: number) {
+        if (!(await this.prisma.user.count({ where: { id } }))) {
+            throw new NotFoundError(`User not exist`);
+        }
     }
 }

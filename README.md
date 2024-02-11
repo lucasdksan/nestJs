@@ -266,7 +266,366 @@ Devemos “ensinar” nossa aplicação a usar essas bibliotecas ao receber soli
 
 [Lista de validation-decorators](https://github.com/typestack/class-validator#validation-decorators)
 
+## Banco de Dados
 
+O NestJS é independente de banco de dados, o que significa que nós podemos integrar ele com qualquer tipo de armazenamento persistente, como bancos de dados SQL e NoSQL.
+
+Visto que o NestJS é uma aplicação Node.js podemos instalar um driver de conexão e simplesmente acessar e gravar dados em um banco.
+
+Entretanto como na maioria dos caso iremos precisar de um banco de dados já existem módulos e guias de integrações com os bancos de dados mais usados e até mesmo ORM.
+
+**ORM**
+
+ORM (Object Relational Mapping) significa Mapeamento de Objeto Relacional e se trata de uma técnica de desenvolvimento utilizada para representar as tabelas ou coleções de um banco de dados com classes e objetos.
+
+Cada tabela ou coleção terá uma classe que descreve sua estrutura e as instâncias dessa classe ou objetos são os registros.
+
+**ORM e NestJS**
+
+Os ORM que são mais facilmente integrados com o NestJS e são citados atualmente na documentação do Nest são:
+
+● MikroORM
+● Squelize
+● TypeORM
+● Knex.js
+● Prisma
+
+## Pipes
+
+Em NestJS, os pipes são uma parte essencial da funcionalidade de transformação e validação de dados dentro dos controladores. Eles desempenham um papel crucial na garantia de que os dados que entram em sua aplicação estejam formatados corretamente e atendam aos requisitos específicos antes de serem processados pelo controlador.
+
+Os pipes em NestJS podem ser utilizados para diversos propósitos, incluindo validação de entrada, transformação de dados e aplicação de lógica de negócios. Eles permitem que você defina regras claras sobre como os dados devem ser manipulados e tratados, o que ajuda a manter a consistência e a integridade dos dados em toda a sua aplicação.
+
+Além disso, os pipes no NestJS são altamente configuráveis e podem ser facilmente personalizados para atender às necessidades específicas do seu aplicativo. Você pode criar seus próprios pipes personalizados para lidar com casos de uso exclusivos ou usar os pipes embutidos fornecidos pelo NestJS, como o ValidationPipe, que é especialmente útil para validar dados de entrada de solicitações HTTP.
+
+Ao usar os pipes de forma eficaz em sua aplicação NestJS, você pode melhorar a robustez, a segurança e a manutenção do seu código, garantindo que os dados sejam tratados de maneira consistente e confiável em toda a sua aplicação. Eles ajudam a promover boas práticas de desenvolvimento, como separação de preocupações e reutilização de código, o que pode facilitar a escalabilidade e a evolução do seu aplicativo ao longo do tempo.
+
+* ValidationPipe
+* ParseIntPipe
+* ParseFloatPipe
+* ParseBoolPipe
+* ParseArrayPipe
+* ParseUUIDPipe
+* ParseEnumPipe
+* DefaultValuePipe
+* ParseFilePipe
+
+```markdown
+import { Controller, Post, Body, UsePipes } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UserService } from './user.service';
+
+@Controller('users')
+export class UserController {
+  constructor(private readonly userService: UserService) {}
+
+  @Post()
+  @UsePipes(new ValidationPipe())
+  async createUser(@Body() createUserDto: CreateUserDto) {
+    return this.userService.createUser(createUserDto);
+  }
+}
+```
+
+Neste exemplo, estamos criando um endpoint POST /users para criar um novo usuário. Usamos o decorator @UsePipes para aplicar o ValidationPipe ao método createUser. O ValidationPipe irá validar automaticamente os dados recebidos no corpo da solicitação em conformidade com as regras definidas no DTO (Object Transfer Data) CreateUserDto.
+
+Aqui está um exemplo de como pode ser o CreateUserDto:
+
+```markdown
+import { IsString, IsNotEmpty, IsEmail } from 'class-validator';
+
+export class CreateUserDto {
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @IsEmail()
+  email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+}
+```
+
+Este DTO define as regras de validação para os campos name, email e password. O ValidationPipe irá garantir que os dados recebidos no corpo da solicitação estejam formatados corretamente antes de serem passados para o método createUser do controlador.
+
+Além do ValidationPipe, você pode criar seus próprios pipes personalizados para manipular tarefas específicas, como transformação de dados ou validação customizada. Aqui está um exemplo básico de como você pode criar um pipe de transformação:
+
+```markdown
+import { PipeTransform, Injectable, ArgumentMetadata } from '@nestjs/common';
+
+@Injectable()
+export class UppercasePipe implements PipeTransform<string, string> {
+  transform(value: string, metadata: ArgumentMetadata): string {
+    return value.toUpperCase();
+  }
+}
+```
+
+Este é um pipe simples que transforma uma string em maiúsculas. Você pode aplicar este pipe a um parâmetro de rota, por exemplo, para garantir que qualquer string passada para esse parâmetro seja sempre convertida em maiúsculas.
+
+Esses são apenas exemplos básicos, mas os pipes em NestJS são altamente flexíveis e podem ser estendidos para atender às necessidades específicas do seu aplicativo. Eles desempenham um papel crucial na garantia da integridade e consistência dos dados em toda a sua aplicação.
+
+## Interceptors
+
+Os interceptors são uma característica poderosa e versátil do NestJS, permitindo a execução de lógica de processamento antes ou depois da execução dos handlers dos controllers. Eles oferecem um mecanismo flexível para a manipulação de solicitações HTTP, transformação de respostas, gerenciamento de erros e muito mais. Vamos explorar mais detalhadamente como os interceptors funcionam e como podem ser aplicados em uma aplicação NestJS.
+
+**Funcionamento dos Interceptors**
+
+Os interceptors são classes que implementam a interface NestInterceptor. Eles podem ser usados para interceptar solicitações HTTP antes que elas cheguem aos controladores (antes da execução dos handlers) e interceptar respostas antes que sejam enviadas de volta ao cliente. A interface NestInterceptor define um método intercept, onde a lógica de intercepção é implementada.
+
+**Tipos de Interceptors**
+
+*Interceptores de solicitação (Request Interceptors)*: Estes interceptores são executados antes que uma solicitação alcance os handlers dos controllers. Eles podem ser usados para autenticação, registro de solicitação, transformação de dados de entrada e muito mais.
+
+*Interceptores de resposta (Response Interceptors)*: Estes interceptores são executados antes que uma resposta seja enviada de volta ao cliente. Eles podem ser usados para transformar a resposta, registrar a resposta, adicionar cabeçalhos adicionais e assim por diante.
+
+**Implementação de Interceptors**
+
+Aqui está um exemplo básico de como você pode implementar um interceptor de solicitação e um interceptor de resposta em uma aplicação NestJS:
+
+```markdown
+import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+@Injectable()
+export class LoggingInterceptor implements NestInterceptor {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    console.log('Antes da execução do handler do controlador...');
+
+    const now = Date.now();
+    return next.handle().pipe(
+      map(data => {
+        console.log(`Depois da execução do handler do controlador... ${Date.now() - now}ms`);
+        return data;
+      }),
+    );
+  }
+}
+```
+
+Neste exemplo, criamos um interceptor de log simples que registra a hora antes e depois da execução do handler do controlador. O método intercept recebe o contexto de execução e o CallHandler, que representa o próximo middleware ou o handler do controlador.
+
+**Aplicação de Interceptors**
+
+Os interceptors podem ser aplicados globalmente, localmente (em controladores específicos ou rotas) ou através de anotações em métodos de controladores individuais. Aqui está um exemplo de como aplicar o interceptor de log globalmente:
+
+```markdown
+import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { LoggingInterceptor } from './logging.interceptor';
+
+@Module({
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    },
+  ],
+})
+export class AppModule {}
+```
+
+Aqui, registramos o interceptor de log como um provedor global no módulo raiz da aplicação. Isso fará com que o interceptor seja executado para todas as solicitações HTTP recebidas pela aplicação.
+
+Os interceptors são uma ferramenta poderosa para adicionar funcionalidades globais, como logs, tratamento de erros, transformações de dados e muito mais, em uma aplicação NestJS. Eles ajudam a promover a modularidade, a reutilização de código e a separação de preocupações, tornando o código mais limpo e mais fácil de manter.
+
+## Middlewares
+
+Middleware no NestJS é uma parte fundamental da arquitetura da aplicação, permitindo a execução de lógica de processamento em cada solicitação HTTP que entra na aplicação antes de ser roteada para um controlador específico. Eles desempenham um papel crucial na manipulação de solicitações e respostas, execução de tarefas comuns como autenticação, registro, tratamento de erros e muito mais.
+
+**Funcionamento dos Middlewares**
+
+Os middlewares no NestJS são classes ou funções que implementam a interface NestMiddleware ou a função de middleware expresso padrão (req, res, next). Eles podem ser aplicados globalmente, localmente (em um controlador específico ou em rotas específicas) ou em nível de roteador.
+
+**Tipos de Middlewares**
+
+*Middleware Global*: Estes middlewares são aplicados a todas as solicitações HTTP recebidas pela aplicação. Eles são úteis para tarefas que devem ser executadas em todas as solicitações, como autenticação, tratamento de logs e compressão de respostas.
+
+*Middleware de Roteador*: Estes middlewares são aplicados a um grupo específico de rotas. Eles são úteis para encapsular a lógica de processamento que se aplica apenas a um conjunto específico de rotas.
+
+*Middleware de Controlador*: Estes middlewares são aplicados a todos os métodos de um controlador específico. Eles são úteis para encapsular a lógica de processamento que é comum a todos os métodos de um controlador.
+
+**Implementação de Middlewares**
+
+Aqui está um exemplo básico de como você pode implementar um middleware global em uma aplicação NestJS:
+
+```markdown
+import { Injectable, NestMiddleware } from '@nestjs/common';
+import { Request, Response, NextFunction } from 'express';
+
+@Injectable()
+export class LoggerMiddleware implements NestMiddleware {
+  use(req: Request, res: Response, next: NextFunction) {
+    console.log(`Request ${req.method} ${req.url} received`);
+    next();
+  }
+}
+```
+
+Este é um middleware simples que registra uma mensagem no console para cada solicitação HTTP recebida, mostrando o método HTTP e a URL da solicitação.
+
+**Aplicação de Middlewares**
+
+Os middlewares podem ser aplicados globalmente, localmente ou em nível de roteador, dependendo dos requisitos específicos da aplicação. Aqui está um exemplo de como você pode aplicar um middleware global em uma aplicação NestJS:
+
+```markdown
+import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
+import { LoggerMiddleware } from './logger.middleware';
+
+@Module({})
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}
+```
+
+Este trecho de código aplica o middleware LoggerMiddleware globalmente a todas as rotas da aplicação.
+
+Os middlewares são uma parte essencial da arquitetura da aplicação no NestJS, permitindo a execução de lógica de processamento em cada solicitação HTTP que entra na aplicação. Eles oferecem uma maneira flexível e poderosa de manipular solicitações e respostas, adicionando funcionalidades globais ou específicas a partes específicas da aplicação. Ao usar middlewares de forma eficaz, você pode melhorar a modularidade, a reutilização de código e a manutenção do seu aplicativo.
+
+## Guards
+
+Os guards (ou guardas) no NestJS são uma parte fundamental da segurança e autorização em uma aplicação. Eles permitem controlar o acesso aos endpoints com base em várias condições, como a identidade do usuário, o papel do usuário, o estado da solicitação e muito mais. Os guards são usados principalmente para proteger as rotas da sua aplicação, garantindo que apenas usuários autorizados tenham acesso aos recursos.
+
+**Funcionamento dos Guards**
+
+Os guards são classes que implementam a interface CanActivate ou uma das interfaces relacionadas, como CanActivate, CanActivateContext, CanActivateAsync, etc. Eles contêm a lógica para determinar se uma solicitação deve ser permitida ou negada com base em determinadas condições.
+
+**Tipos de Guards**
+
+*Guarda de Rota (Route Guard)*: Estes guards são aplicados a nível de rota e determinam se uma solicitação pode ou não acessar uma rota específica com base em determinadas condições.
+
+*Guarda de Controlador (Controller Guard)*: Estes guards são aplicados a nível de controlador e determinam se uma solicitação pode ou não acessar todos os métodos de um controlador específico com base em determinadas condições.
+
+*Guarda de Execução (Execution Guard)*: Estes guards são aplicados a nível de método e determinam se uma solicitação pode ou não acessar um método específico de um controlador com base em determinadas condições.
+
+*Implementação de Guards*
+
+Aqui está um exemplo básico de como você pode implementar um guard de autenticação em uma aplicação NestJS:
+
+```markdown
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { Observable } from 'rxjs';
+
+@Injectable()
+export class AuthGuard implements CanActivate {
+  canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+    const request = context.switchToHttp().getRequest();
+    return request.isAuthenticated();
+  }
+}
+```
+
+Este é um guard simples que verifica se o usuário está autenticado antes de permitir o acesso a uma rota ou a um método de controlador.
+
+**Aplicação de Guards**
+
+Os guards podem ser aplicados globalmente, localmente (em rotas específicas ou em controladores específicos) ou em nível de método. Aqui está um exemplo de como você pode aplicar um guard de autenticação globalmente em uma aplicação NestJS:
+
+```markdown
+import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
+import { AuthGuard } from './auth.guard';
+
+@Module({})
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AuthGuard).forRoutes('*');
+  }
+}
+```
+
+Este trecho de código aplica o guard de autenticação globalmente a todas as rotas da aplicação.
+
+Os guards são uma parte essencial da segurança em uma aplicação NestJS, permitindo controlar o acesso aos recursos com base em várias condições. Eles oferecem uma maneira poderosa e flexível de proteger as rotas da sua aplicação, garantindo que apenas usuários autorizados tenham acesso aos recursos. Ao usar guards de forma eficaz, você pode melhorar a segurança, a autorização e a integridade da sua aplicação.
+
+## Exceptions
+
+Exceptions (ou exceções) no NestJS são uma parte crucial da gestão de erros em uma aplicação. Eles são usados para lidar com erros durante a execução do código e para fornecer respostas adequadas às solicitações do cliente quando ocorrem problemas inesperados. As exceções no NestJS são poderosas e flexíveis, permitindo a captura, o tratamento e a personalização de erros em toda a aplicação.
+
+**Funcionamento das Exceptions**
+
+As exceções no NestJS são tratadas por um mecanismo centralizado que intercepta erros lançados durante a execução do código. Este mecanismo é alimentado pelo sistema de middleware do NestJS e é responsável por capturar e processar exceções em toda a aplicação.
+
+**Tipos de Exceptions**
+
+*Exceções HTTP*: Estas exceções são usadas para lidar com erros relacionados a solicitações HTTP, como erros de solicitação inválida, não autorizada, não encontrada, etc.
+
+*Exceções Personalizadas*: Você pode criar suas próprias exceções personalizadas para lidar com erros específicos da sua aplicação. Isso permite que você tenha controle total sobre como os erros são tratados e respondidos aos clientes.
+
+**Implementação de Exceptions**
+
+Aqui está um exemplo básico de como você pode criar uma exceção personalizada em uma aplicação NestJS:
+
+```markdown
+import { HttpException, HttpStatus } from '@nestjs/common';
+
+export class MyCustomException extends HttpException {
+  constructor() {
+    super('Mensagem de erro personalizada', HttpStatus.BAD_REQUEST);
+  }
+}
+```
+
+Esta é uma classe de exceção personalizada que estende a classe HttpException do NestJS. Ela define uma mensagem de erro personalizada e um código de status HTTP para a exceção.
+
+**Tratamento de Exceptions**
+
+As exceções no NestJS podem ser tratadas globalmente ou localmente. Você pode usar o decorator @Catch para capturar exceções em nível global ou usar o decorator @Catch em um interceptor específico para capturar exceções em nível local.
+
+**Aplicação de Exceptions**
+
+Aqui está um exemplo de como você pode aplicar uma exceção personalizada em um controlador NestJS:
+
+```markdown
+import { Controller, Get } from '@nestjs/common';
+import { MyCustomException } from './my-custom-exception';
+
+@Controller()
+export class AppController {
+  @Get()
+  async getHello() {
+    throw new MyCustomException();
+  }
+}
+```
+
+Neste exemplo, lançamos a exceção personalizada MyCustomException quando uma solicitação é feita para o endpoint GET /.
+
+**Tratamento de Exceções Global**
+
+Aqui está um exemplo de como você pode configurar um filtro global para lidar com exceções em toda a aplicação NestJS:
+
+```markdown
+import { Catch, ExceptionFilter, ArgumentsHost, HttpException } from '@nestjs/common';
+import { Request, Response } from 'express';
+
+@Catch()
+export class AllExceptionsFilter implements ExceptionFilter {
+  catch(exception: unknown, host: ArgumentsHost) {
+    const ctx = host.switchToHttp();
+    const response = ctx.getResponse<Response>();
+    const request = ctx.getRequest<Request>();
+
+    const status = exception instanceof HttpException ? exception.getStatus() : 500;
+
+    response.status(status).json({
+      statusCode: status,
+      message: exception instanceof HttpException ? exception.getResponse() : 'Erro interno do servidor',
+      timestamp: new Date().toISOString(),
+      path: request.url,
+    });
+  }
+}
+```
+
+Este é um filtro de exceções global que captura todas as exceções lançadas em toda a aplicação e envia uma resposta JSON adequada para o cliente.
+
+As exceções no NestJS são uma parte crucial da gestão de erros em uma aplicação. Elas permitem capturar, tratar e personalizar respostas de erro para garantir uma experiência de usuário consistente e confiável. Ao usar exceções de forma eficaz, você pode melhorar a segurança, a confiabilidade e a manutenção da sua aplicação.
 
 ## Referências
 
