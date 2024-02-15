@@ -37,18 +37,16 @@ export class UserService {
     async updatePatch(id: number, data: UpdatePatchUserDTO) {
         await this.exists(id);
 
-        let birth_at_convert;
-
+        let birthAt = null;
         if (data.birth_at) {
-            birth_at_convert = new Date(data.birth_at);
-        } else {
-            birth_at_convert = null;
+            birthAt = new Date(data.birth_at).toISOString();
         }
 
         return await this.prisma.user.update({
             where: { id },
-            data: { birth_at: birth_at_convert, ...data }
+            data: { birth_at: birthAt, ...data }
         });
+
     }
 
     async delete(id: number) {

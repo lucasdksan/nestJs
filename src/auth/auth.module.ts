@@ -14,6 +14,7 @@ import { AuthServide } from "./auth.service";
         PrismaModule
     ],
     controllers: [AuthController],
-    providers: [AuthServide]
+    providers: [AuthServide],
+    exports:[AuthServide]
 })
 export class AuthModule { }

@@ -7,7 +7,6 @@ export class LogInterceptors implements NestInterceptor {
 
         return next.handle().pipe(tap(()=>{
             const request = context.switchToHttp().getRequest();
-            console.log("Request: ", request);
             console.log(`Execução levou: ${Date.now() - dt} milisegundos`);
         }));
     }

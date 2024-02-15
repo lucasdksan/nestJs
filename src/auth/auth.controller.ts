@@ -1,10 +1,12 @@
 import { UserService } from './../user/user.service';
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Post, Req, UseGuards } from "@nestjs/common";
 import { AuthLoginDTO } from "./dto/auth-login.dto";
 import { AuthRegisterDTO } from "./dto/auth-register.dto";
 import { AuthForgetDTO } from "./dto/auth-forget.dto";
 import { AuthResetDTO } from "./dto/auth-reset.dto";
 import { AuthServide } from './auth.service';
+import { AuthGuard } from 'src/guards/auth.guard';
+import { User } from 'src/decorators/user.decorator';
 
 @Controller("auth")
 export class AuthController {
@@ -12,6 +14,12 @@ export class AuthController {
         private readonly userService: UserService,
         private readonly authService: AuthServide
     ) {}
+
+    @UseGuards(AuthGuard)
+    @Post("me")
+    async me(@User() user){
+        return { user };
+    }
 
     @Post("login")
     async loign(@Body() body: AuthLoginDTO) {
