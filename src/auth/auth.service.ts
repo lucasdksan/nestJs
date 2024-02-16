@@ -4,9 +4,10 @@ import { User } from "@prisma/client";
 import { PrismaService } from "src/prisma/prisma.service";
 import { UserService } from "src/user/user.service";
 import { AuthRegisterDTO } from "./dto/auth-register.dto";
+import bcrypt from "bcrypt";
 
 @Injectable()
-export class AuthServide {
+export class AuthService {
     private issuer = "login";
     private audience = "users";
 
@@ -65,7 +66,7 @@ export class AuthServide {
             throw new UnauthorizedException("Email e/ou senha incorretos!");
         }
 
-        if(password === user.password) {
+        if(await bcrypt.compare(password, user.password)) {
             return this.createToken(user);
         } else {
             throw new UnauthorizedException("Email e/ou senha incorretos!");
@@ -87,8 +88,6 @@ export class AuthServide {
     }
 
     async reset(password: string, token: string) {
-        // Validar o token
-
         const id = 0;
 
         const user = await this.prisma.user.update({

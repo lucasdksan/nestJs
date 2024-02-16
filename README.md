@@ -746,6 +746,14 @@ RBAC (Role-based access control) significa controle de acesso baseado em funçã
 
 Por exemplo, um usuário autenticado pode alterar o seu próprio nome, mas não pode alterar o nome de outro usuário. Já um usuário administrador pode além de trocar o seu próprio nome, trocar também o nome de outros usuários, pois ele tem esta função.
 
+## Cors
+
+CORS (Cross-origin Resource Sharing) significa compartilhamento de recursos com origens diferentes é um mecanismo que usa os cabeçalhos (Headers) do protocolo HTTP para validar se o acesso será permitido ou não.
+
+Usar este recurso de segurança é muito importante pois um site FAKE poderia se passar pelo site real e fazer uso em determinados momento da API real.
+
+Outro cenário é evitar o uso da sua API sem permissão ou abusos no uso de recursos de outras origens.
+
 ## Referências
 
 - [Nest Js URL](https://docs.nestjs.com/)

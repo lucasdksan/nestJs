@@ -1,15 +1,19 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { CreateUserDTO } from "./dto/create-user.dto";
 import { PrismaService } from "src/prisma/prisma.service";
 import { UpdatePutUserDTO } from "./dto/update-put-user.dto";
 import { UpdatePatchUserDTO } from "./dto/update-patch-user.dto";
-import { NotFoundError } from "rxjs";
+import bcrypt from "bcrypt";
 
 @Injectable()
 export class UserService {
     constructor(private readonly prisma: PrismaService) { }
 
     async create(data: CreateUserDTO) {
+        const salt = await bcrypt.genSalt();
+
+        data.password  = await bcrypt.hash(data.password, salt);
+
         return await this.prisma.user.create({
             data
         });
@@ -27,6 +31,9 @@ export class UserService {
 
     async updatePut(id: number, data: UpdatePutUserDTO) {
         await this.exists(id);
+        const salt = await bcrypt.genSalt();
+
+        data.password  = await bcrypt.hash(data.password, salt);
 
         return await this.prisma.user.update({
             where: { id },
@@ -36,6 +43,9 @@ export class UserService {
 
     async updatePatch(id: number, data: UpdatePatchUserDTO) {
         await this.exists(id);
+        const salt = await bcrypt.genSalt();
+
+        data.password  = await bcrypt.hash(data.password, salt);
 
         let birthAt = null;
         if (data.birth_at) {
@@ -59,7 +69,7 @@ export class UserService {
 
     async exists(id: number) {
         if (!(await this.prisma.user.count({ where: { id } }))) {
-            throw new NotFoundError(`User not exist`);
+            throw new NotFoundException(`User not exist`);
         }
     }
 }
