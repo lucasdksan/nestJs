@@ -8,6 +8,7 @@ import { APP_GUARD } from "@nestjs/core";
 import { ConfigModule } from "@nestjs/config";
 import { MailerModule } from "@nestjs-modules/mailer";
 import { PugAdapter } from "@nestjs-modules/mailer/dist/adapters/pug.adapter";
+import { env } from "./env";
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { PugAdapter } from "@nestjs-modules/mailer/dist/adapters/pug.adapter";
     forwardRef(() => UserModule), 
     forwardRef(() => AuthModule),
     MailerModule.forRoot({
-      transport: "smtps://asa17@ethereal.email:VHhGz7mGRxWt2ac1CG@smtp.ethereal.email",
+      transport: `smtps://${env.MAILER_EMAIL}:${env.MAILER_PASSWORD}@${env.MAILER_HOST}`,
       defaults: {
         from: `"nest-modules" <modules@nestjs.com>`,
       },
