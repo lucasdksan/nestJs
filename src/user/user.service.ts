@@ -3,7 +3,7 @@ import { CreateUserDTO } from "./dto/create-user.dto";
 import { PrismaService } from "src/prisma/prisma.service";
 import { UpdatePutUserDTO } from "./dto/update-put-user.dto";
 import { UpdatePatchUserDTO } from "./dto/update-patch-user.dto";
-import bcrypt from "bcrypt";
+import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class UserService {
