@@ -20,7 +20,14 @@ import { env } from "./env";
     forwardRef(() => UserModule), 
     forwardRef(() => AuthModule),
     MailerModule.forRoot({
-      transport: `smtps://${env.MAILER_EMAIL}:${env.MAILER_PASSWORD}@${env.MAILER_HOST}`,
+      transport: {
+        host: env.MAILER_HOST,
+        port: parseInt(env.MAILER_PORT),
+        auth: {
+          user: env.MAILER_EMAIL,
+          pass: env.MAILER_PASSWORD
+        }
+      },
       defaults: {
         from: `"nest-modules" <modules@nestjs.com>`,
       },
