@@ -3,8 +3,6 @@ import { ExecutionContext, NotFoundException, createParamDecorator } from "@nest
 export const User = createParamDecorator((filter:string, context: ExecutionContext)=>{
     const req = context.switchToHttp().getRequest();
 
-    console.log("Req: ", req.user);
-
     if(req.user) {
         if(filter){
             return req.user[filter];

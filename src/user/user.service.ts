@@ -45,7 +45,9 @@ export class UserService {
         await this.exists(id);
         const salt = await bcrypt.genSalt();
 
-        data.password  = await bcrypt.hash(data.password, salt);
+        if(data.password){
+            data.password  = await bcrypt.hash(data.password, salt);
+        }
 
         let birthAt = null;
         if (data.birth_at) {
@@ -62,9 +64,11 @@ export class UserService {
     async delete(id: number) {
         await this.exists(id);
 
-        return await this.prisma.user.delete({
+        await this.prisma.user.delete({
             where: { id }
         });
+
+        return true;
     }
 
     async exists(id: number) {

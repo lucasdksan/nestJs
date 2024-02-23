@@ -3,12 +3,11 @@ import { CreateUserDTO } from "./dto/create-user.dto";
 import { UpdatePutUserDTO } from "./dto/update-put-user.dto";
 import { UpdatePatchUserDTO } from "./dto/update-patch-user.dto";
 import { UserService } from "./user.service";
-import { ParamId } from "src/decorators/param-id.decorator";
-import { Roles } from "src/decorators/roles.decorator";
-import { Role } from "src/enums/role.enums";
-import { RoleGuard } from "src/guards/role.guard";
-import { AuthGuard } from "src/guards/auth.guard";
-import { ThrottlerGuard } from "@nestjs/throttler";
+import { Roles } from "../decorators/roles.decorator";
+import { Role } from "../enums/role.enums";
+import { AuthGuard } from "../guards/auth.guard";
+import { RoleGuard } from "../guards/role.guard";
+import { ParamId } from "../decorators/param-id.decorator";
 
 // @UseInterceptors(LogInterceptors)
 @Roles(Role.Admin)
