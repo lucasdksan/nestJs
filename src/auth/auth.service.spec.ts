@@ -4,6 +4,7 @@ import { userPrismaMock } from "../testing/user-prisma.mock";
 import { jwtServiceMock } from "../testing/Jwt-service.mock";
 import { userServiceMock } from "../testing/user-service.mock";
 import { mailerServiceMock } from "../testing/mailer-service.mock";
+import { userPrismaList } from "../testing/user-prisma-list.mock";
 
 describe("AuthService", () => {
     let authService: AuthService;
